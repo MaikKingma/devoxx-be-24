@@ -181,7 +181,7 @@ class PersonName extends Name {
       `[["A", "B"], ["B", "C"], ["C", "D"], ["D", "E"], ["E", "F"], ["F", "G"]]` implement a gatherer for that
     - Take-while-including: `["A", "B", "C", "D", "E", "F", "G"]`-> `["A", "B", "C", "D"]`
 - **ClassFile API:**
-    - we will benefit from this indirectly cause it will upgrade the language version of used dependencies to the
+    - we will benefit from this indirectly because it will upgrade the language version of used dependencies to the
       current language level without having to recompile or upgrade the dependencies.
 
 
