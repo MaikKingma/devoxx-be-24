@@ -106,10 +106,15 @@ collector.
 
 ```java
 int num = 42;
-if(num instanceof byte b){
-    System.out.println(b +" between -128 and 127");
-} else {
-    System.out.println(num +" not between -128 and 127");
+if(num instanceof
+byte b){
+    System.out.
+
+println(b +" between -128 and 127");
+}else{
+    System.out.
+
+println(num +" not between -128 and 127");
 }
 ```
 
@@ -117,18 +122,66 @@ if(num instanceof byte b){
 
 ```java
 Boolean triState = Boolean.TRUE;
-switch(triState) {
-    case true -> System.out.println("true");
-    case false -> System.out.println("false");
-    case null -> System.out.println("null");
+switch(triState){
+    case true->System.out.
+
+println("true");
+    case false->System.out.
+
+println("false");
+    case null->System.out.
+
+println("null");
 }
 ```
 
-- **JEP-476: Module imports:** imports all public top-level-types in packages exported by $mod and others (more info in slides)
+- **JEP-476: Module imports:** imports all public top-level-types in packages exported by $mod and others (more info in
+  slides)
+
 ```java
-import module $mod;
+import module
+
+$mod;
 ```
+
 - **JEP-476: Default imports** for `java.base` modules
 - **String templates** will be removed (JEP-430 and JEP-459)
+- **Flexible Constructor bodies:** Check arguments before the super call of a constructor
+
+```java
+class Name {
+  private String firstName;
+  private String lastName;
+
+  public Name(String firstName, String lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+}
+
+class PersonName extends Name {
+  public PersonName(String full) {
+    String[] parts = full.split(" ");
+    super(parts[0], parts[1]);
+  }
+}
+```
+
+- **Stream Gatherers:**
+    - missing things like sliding windows, fixed groups, take-while-including, scanning, increasing sequences etc.
+    - Missing intermediate operations like collectors in terminal operations: concept of a gatherer (map would be an
+      example of a Gatherer)
+        - Initializers: `Stream::of`, `Stream::empty`, `Stream::iterate`, `Stream::generate`
+        - Finishers: `Stream::toList`, `Stream::toSet`, `Stream::toMap`, `Stream::toConcurrentMap`,
+          `Stream::toUnmodifiableList`,
+          `Stream::toUnmodifiableSet`, `Stream::toUnmodifiableMap`, `Stream::toUnmodifiableConcurrentMap`
+        - Combiner: combine two gatherers into one. `Stream::concat`, `Stream::flatMap`, `Stream::map`, `Stream::filter`
+    - Fixed sized groups: `["A", "B", "C", "D", "E", "F", "G"]`-> `[["A", "B"], ["C", "D"], ["E", "F"], ["G"]]`
+    - Sliding windows: `["A", "B", "C", "D", "E", "F", "G"]`->
+      `[["A", "B"], ["B", "C"], ["C", "D"], ["D", "E"], ["E", "F"], ["F", "G"]]` implement a gatherer for that
+    - Take-while-including: `["A", "B", "C", "D", "E", "F", "G"]`-> `["A", "B", "C", "D"]`
+- **ClassFile API:**
+    - we will benefit from this indirectly cause it will upgrade the language version of used dependencies to the
+      current language level without having to recompile or upgrade the dependencies.
 
 
