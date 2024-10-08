@@ -1,0 +1,113 @@
+# docker compose down; docker compose  -f docker-compose.dev.yml up
+
+version: "3.9"
+
+services:
+
+  lb:
+    hostname: lb
+    container_name: lb
+    network_mode: host 
+    image: nginx:latest
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "9999:9999"
+    ulimits:
+      nofile:
+        soft: 1000000
+        hard: 1000000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9999/members/1/balance"]
+      interval: 3s
+      retries: 15
+    deploy:
+      resources:
+        limits:
+          cpus: "0.18"
+          memory: "44MB"
+
+  
+  db:
+    network_mode: host
+    image: postgres:latest
+    hostname: db
+    container_name: db
+    environment:
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_USER=rinha
+      - POSTGRES_DB=rinha
+    ports:
+      - "5400:5400"
+    expose:
+      - "5400"
+    volumes:
+      - ./init.postgresql.1table.fn.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgresql.dev.conf:/etc/postgresql/postgresql.conf
+    command: 'postgres -c config_file=/etc/postgresql/postgresql.conf'  
+    deploy:
+      resources: 
+        limits:
+          cpus: "0.70"
+          memory: "250MB"
+    healthcheck:
+      test: ["CMD", "pg_isready", "--username", "rinha", "--port", "5400"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+      start_period: 3s
+
+
+  # Jaeger service
+  jaeger:
+    network_mode: host
+    hostname: jaeger
+    container_name: jaeger
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+
+  # Prometheus service
+  prometheus:
+    network_mode: host
+    hostname: prom
+    container_name: prom
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+
+  # Grafana service
+  grafana:
+    network_mode: host
+    hostname: grafana
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=123
+  
+  # Exporter
+  postgres-exporter:
+    network_mode: host 
+    hostname: postgres-exporter
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - 9187:9187
+    environment:
+      DATA_SOURCE_NAME: "postgresql://rinha:123@127.0.0.1:5400/rinha?sslmode=disable"
+
+
+

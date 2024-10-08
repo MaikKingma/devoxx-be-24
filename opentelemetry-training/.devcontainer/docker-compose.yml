@@ -1,0 +1,31 @@
+services:
+  application:
+    image: ghcr.io/novatecconsulting/opentelemetry-training-application:latest
+    build:
+      context: ../
+      dockerfile: .devcontainer/Dockerfile
+    privileged: true
+    tty: true
+    volumes:
+      - ../:/workspace
+    ports:
+      - 5000:5000
+
+  echo:
+    image: ealen/echo-server:0.9.2
+    expose:
+      - 6000
+    environment:
+      PORT: 6000
+
+  tutorial:
+    image: ghcr.io/novatecconsulting/opentelemetry-training-tutorial:latest
+    build:
+      context: ../tutorial/
+      dockerfile: Dockerfile
+      target: rt-dev
+    tty: true
+    volumes:
+      - ./tutorial:/workspace
+    ports:
+      - 1313:80

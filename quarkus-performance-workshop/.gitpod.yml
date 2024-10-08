@@ -1,0 +1,87 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - name: Build project
+    init: |
+      mvn -f ./peecs install
+    command: |
+      cd ./peecs
+      quarkus dev
+  
+  - name: Dev check
+    command: |
+      echo "Checking if the application is running"
+      sleep 90
+      curl -v http://localhost:9000/members/1/balance
+
+  - name: Start services
+    init: |
+      docker compose pull
+    command: |
+      docker compose down; docker compose up;
+  
+  - name: Observe containers
+    command: |
+      watch docker ps;
+
+  - name: Run performance test
+    command: |
+      ./install-gatling.sh
+      sleep 60;
+      cd perf-test/
+      ./run-local-test.sh
+
+ports:
+  - port: 3306
+    visibility: private
+    onOpen: ignore
+  - port: 5005
+    visibility: private
+    onOpen: ignore
+  - port: 5333
+    visibility: private
+    onOpen: ignore    
+  - port: 5400
+    visibility: private
+    onOpen: ignore
+  - port: 5432
+    visibility: private
+    onOpen: ignore
+  - port: 5501
+    visibility: private
+    onOpen: ignore
+  - port: 6543
+    visibility: private
+    onOpen: ignore    
+  - port: 9000
+    visibility: private
+    onOpen: ignore
+  - port: 9001
+    visibility: private
+    onOpen: ignore
+  - port: 9002
+    visibility: private
+    onOpen: ignore
+  - port: 9090
+    visibility: public
+    onOpen: ignore
+  - port: 9999
+    visibility: public
+    onOpen: ignore
+  - port: 5500
+    visibility: public
+    onOpen: ignore
+
+vscode:
+  extensions:
+    - ritwickdey.liveserver
+    - vscjava.vscode-java-pack
+    - vscjava.vscode-java-debug
+    - vscjava.vscode-java-dependency
+    - vscjava.vscode-java-test
+    - vscjava.vscode-maven
+    - redhat.java
+    - redhat.fabric8-analytics
+    - ms-azuretools.vscode-docker
+
