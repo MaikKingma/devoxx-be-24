@@ -113,14 +113,30 @@ necessarily to write tests first. write tests when you know what you want to tes
 > signature
 
 **Best Praciteces**
+
 - orthogonal test cases (low multicollienarity)
 - few parameters < 3-5
 - avoid boolean riddled tests
 
 ## Testing styles
+
 - output based: assert result
 - state based: assert state of object fields after method call or external states like DB state
 - interaction based: assert that a method was called with certain arguments (collaborators)
+
+## Approval testiing
+
+write test cases with test input and bogus test output assertions, then verify the actual output with business and when
+all is good update the test output.
+
+## BDD
+[Writing tests is fun with spok](https://www.youtube.com/watch?v=YzhIyF836-A&ab_channel=BarcelonaJug)
+- cucumber
+- JBehave
+- Spok
+- and so on
+
+
 
 
 
